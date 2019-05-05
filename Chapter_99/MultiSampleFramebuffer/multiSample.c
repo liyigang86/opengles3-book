@@ -96,6 +96,16 @@ int InitMultiSampleFrameBuffers()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	if (multiSampleFBO.renderBufferColor != 0) {
+		glDeleteRenderbuffers(1, &multiSampleFBO.renderBufferColor);
+	}
+	if (multiSampleFBO.renderBufferDepthStencil != 0) {
+		glDeleteRenderbuffers(1, &multiSampleFBO.renderBufferDepthStencil);
+	}
+	if (multiSampleFBO.fbo != 0) {
+		glDeleteFramebuffers(1, &multiSampleFBO.fbo);
+	}
+
 	return TRUE;
 }
 
@@ -170,10 +180,11 @@ int Init(ESContext *esContext)
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-	//if (InitMultiSampleFrameBuffers() != TRUE)
-	//{
-	//	return FALSE;
-	//}
+	if (InitMultiSampleFrameBuffers() != TRUE)
+	{
+		fprintf(stderr, "multisample renderbuffer not supported");
+		return FALSE;
+	}
 
 	return TRUE;
 }
@@ -199,16 +210,7 @@ void Draw(ESContext *esContext)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vVertices);
 	glEnableVertexAttribArray(0);
 
-	//glBindFramebuffer(GL_DRAW_FRAMEBUFFER, multiSampleFBO.fbo); 
-
 	glDrawArrays(GL_TRIANGLES, 0, 3);
-
-	//glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	//glBindFramebuffer(GL_READ_FRAMEBUFFER, multiSampleFBO.fbo);
-
-	//glBlitFramebuffer(0, 0, 320, 240, 0, 0, 320, 240, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-	
-	//glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 }
 
 void Shutdown(ESContext *esContext)
@@ -216,17 +218,6 @@ void Shutdown(ESContext *esContext)
 	UserData *userData = esContext->userData;
 
 	glDeleteProgram(userData->programObject);
-
-	//if (multiSampleFBO.renderBufferColor != 0) {
-	//	glDeleteRenderbuffers(1, &multiSampleFBO.renderBufferColor);
-	//}
-	//if (multiSampleFBO.renderBufferDepthStencil != 0) {
-	//	glDeleteRenderbuffers(1, &multiSampleFBO.renderBufferDepthStencil);
-	//}
-	//if (multiSampleFBO.fbo != 0) {
-	//	glDeleteFramebuffers(1, &multiSampleFBO.fbo);
-	//}
-
 }
 
 int esMain(ESContext *esContext)
