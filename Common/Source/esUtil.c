@@ -181,26 +181,52 @@ GLboolean ESUTIL_API esCreateWindow ( ESContext *esContext, const char *title, G
 
    {
       EGLint numConfigs = 0;
-      EGLint attribList[] =
-      {
-         EGL_RED_SIZE,       5,
-         EGL_GREEN_SIZE,     6,
-         EGL_BLUE_SIZE,      5,
-         EGL_ALPHA_SIZE,     ( flags & ES_WINDOW_ALPHA ) ? 8 : EGL_DONT_CARE,
-         EGL_DEPTH_SIZE,     ( flags & ES_WINDOW_DEPTH ) ? 8 : EGL_DONT_CARE,
-         EGL_STENCIL_SIZE,   ( flags & ES_WINDOW_STENCIL ) ? 8 : EGL_DONT_CARE,
-         EGL_SAMPLE_BUFFERS, ( flags & ES_WINDOW_MULTISAMPLE ) ? 1 : 0,
-         // if EGL_KHR_create_context extension is supported, then we will use
-         // EGL_OPENGL_ES3_BIT_KHR instead of EGL_OPENGL_ES2_BIT in the attribute list
-         EGL_RENDERABLE_TYPE, GetContextRenderableType ( esContext->eglDisplay ),
-         EGL_NONE
-      };
+	  if (flags & ES_WINDOW_MULTISAMPLE) {
+		  EGLint attribList[] =
+		  {
+			 EGL_RED_SIZE,       5,
+			 EGL_GREEN_SIZE,     6,
+			 EGL_BLUE_SIZE,      5,
+			 EGL_ALPHA_SIZE,     (flags & ES_WINDOW_ALPHA) ? 8 : EGL_DONT_CARE,
+			 EGL_DEPTH_SIZE,     (flags & ES_WINDOW_DEPTH) ? 8 : EGL_DONT_CARE,
+			 EGL_STENCIL_SIZE,   (flags & ES_WINDOW_STENCIL) ? 8 : EGL_DONT_CARE,
+			 EGL_SAMPLE_BUFFERS,  1,
+			 EGL_SAMPLES,        8,
+			 // if EGL_KHR_create_context extension is supported, then we will use
+			 // EGL_OPENGL_ES3_BIT_KHR instead of EGL_OPENGL_ES2_BIT in the attribute list
+			 EGL_RENDERABLE_TYPE, GetContextRenderableType(esContext->eglDisplay),
+			 EGL_NONE
+		  };
 
-      // Choose config
-      if ( !eglChooseConfig ( esContext->eglDisplay, attribList, &config, 1, &numConfigs ) )
-      {
-         return GL_FALSE;
-      }
+		  // Choose config
+		  if (!eglChooseConfig(esContext->eglDisplay, attribList, &config, 1, &numConfigs))
+		  {
+			  return GL_FALSE;
+		  }
+	  }
+	  else {
+		  EGLint attribList[] =
+		  {
+			 EGL_RED_SIZE,       5,
+			 EGL_GREEN_SIZE,     6,
+			 EGL_BLUE_SIZE,      5,
+			 EGL_ALPHA_SIZE,     (flags & ES_WINDOW_ALPHA) ? 8 : EGL_DONT_CARE,
+			 EGL_DEPTH_SIZE,     (flags & ES_WINDOW_DEPTH) ? 8 : EGL_DONT_CARE,
+			 EGL_STENCIL_SIZE,   (flags & ES_WINDOW_STENCIL) ? 8 : EGL_DONT_CARE,
+			 EGL_SAMPLE_BUFFERS,  0,
+			 // if EGL_KHR_create_context extension is supported, then we will use
+			 // EGL_OPENGL_ES3_BIT_KHR instead of EGL_OPENGL_ES2_BIT in the attribute list
+			 EGL_RENDERABLE_TYPE, GetContextRenderableType(esContext->eglDisplay),
+			 EGL_NONE
+		  };
+
+		  // Choose config
+		  if (!eglChooseConfig(esContext->eglDisplay, attribList, &config, 1, &numConfigs))
+		  {
+			  return GL_FALSE;
+		  }
+	  }
+     
 
       if ( numConfigs < 1 )
       {

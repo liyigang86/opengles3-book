@@ -26,5 +26,7 @@ SUBDIRS( Common
          Chapter_14/ParticleSystem
          Chapter_14/ParticleSystemTransformFeedback 
          Chapter_14/Shadows 
-         Chapter_14/TerrainRendering )	
+         Chapter_14/TerrainRendering 
+		 Chapter_99/MultiSampleFramebuffer
+		 )	
 		
